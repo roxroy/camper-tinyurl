@@ -1,0 +1,27 @@
+{
+  "name": "camper-tinyurl",
+  "version": "1.0.0",
+  "description": "URL shortener microservice",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roxroy/camper-tinyurl.git"
+  },
+  "keywords": [
+    "microservice",
+    "node"
+  ],
+  "author": "roxroy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roxroy/camper-tinyurl/issues"
+  },
+  "homepage": "https://github.com/roxroy/camper-tinyurl#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "pug": "^2.0.0-beta11"
+  }
+}

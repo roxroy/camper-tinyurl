@@ -1,0 +1,8 @@
+body {
+    margin : 20px auto;
+}
+
+.backdrop {
+    padding : 30px;
+    background-color: #eee;
+}
