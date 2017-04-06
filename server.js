@@ -4,9 +4,25 @@ var url = require('url');
 
 var app = express()
 
+function getShortCode(originalUrl) {
+ var shortCode = originalUrl
+ return shortCode;   
+}
+
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'pug')
 app.set('views','public')
+
+app.get('/new/*', function(req, res) {
+     var result = { original_url : undefined,  short_url: undefined };
+     if (req.originalUrl) {
+        result.original_url = req.originalUrl.substr(5);
+        result.short_url =  getShortCode(result.original_url);
+     }
+     
+     res.json(result)
+})
+
 
 app.get('/', function(req, res) {
     var now = new Date()
@@ -16,10 +32,5 @@ app.get('/', function(req, res) {
     res.render('index', result )
 })
 
-app.get('/new:longUrl', function(req, res) {
-     var result = { original_url : undefined,  short_url: undefined };
-     
-     res.json(result)
-})
 
 app.listen(process.env.PORT || 3000)
