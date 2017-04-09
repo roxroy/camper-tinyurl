@@ -1,25 +1,21 @@
-doctype html
-html(lang='en')
-  head
-    title URL Shortener Microservice
-    link(href='/bootstrap.min.css', rel='stylesheet', type='text/css')
-    link(href='/app.css', rel='stylesheet', type='text/css')
-  body
-   div.container.backdrop
+extends layout
+
+block content
+  div.container.backdrop
     h1.text-center URL Shortener Microservice
-    h3 User stories:
+    h2 User stories:
     ol
      li I can pass a URL as a parameter and I will receive a shortened URL in the JSON response.
      li When I visit that shortened URL, it will redirect me to my original link.
-
+  
     h2 Example creation usage:
     p.
       #{url}new/https://www.google.com <br />
      #{url}new/http://foo.com:80
-
+  
     h2 Example creation output:
     p { "original_url":"http://foo.com:80", "short_url":"#{url}8170" }
-
+  
     h2 Usage:
     p.
       #{url}2871   will be directed to https://www.google.com/
