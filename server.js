@@ -11,7 +11,6 @@ app.set('views', __dirname + '/views');
 
 app.get('/', routes.index);
 app.get('/new/*', routes.add);
-app.get('/:short', routes.redirect);
-
+app.get('/:short_url', routes.redirect);
 
 app.listen(process.env.PORT || 3000)

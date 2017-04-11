@@ -9,13 +9,11 @@ var CounterSchema = Schema({
 var counter = mongoose.model('counter', CounterSchema);
 
 // first add this to the db
-// db.counters.insert(  {   _id: "url_id",   seq: 0  } )
+// db.counters.insert(  {   _id: "url_id",   seq: 1  } )
 
 var WebpageSchema   = new Schema({
     id: String,
     url: String,
-    created_at : Date,
-    touched_at : Date
 });
 
 WebpageSchema.pre('save', function(next) {
