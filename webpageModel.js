@@ -4,12 +4,12 @@ var mongoose = require('mongoose'),
 
 var CounterSchema = Schema({
     _id: {type: String, required: true},
-    seq: { type: Number, default: 0 }
+    seq: { type: Number, default: 10 }
 });
 var counter = mongoose.model('counter', CounterSchema);
 
 // first add this to the db
-// db.counters.insert(  {   _id: "url_id",   seq: 1  } )
+// db.counters.insert(  {   _id: "url_id",   seq: 10  } )
 
 var WebpageSchema   = new Schema({
     id: String,
