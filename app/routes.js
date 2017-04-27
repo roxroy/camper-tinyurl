@@ -26,25 +26,31 @@ exports.index = function(req, res){
   res.render('index', { url:getSiteUrl(req) } )
 };
 
-const getUniqueCode = function() {
-  // return new pending promise
-  return new Promise((resolve, reject) => {  
-		//while (true)
-		{
-			var shortCode = Math.random().toString(36).slice(2,6);
-			console.log(shortCode);
-			var query  = WeblinkModel.where({ code: shortCode });
-			query.findOne(function (err, weblink) {
-			  if ( err ) {
-				  return res.json({Error: 'Sorry, something went wrong!'});
-			  }
-			  if (!weblink) {
-			    console.log("Uique: "+shortCode);
-				  return resolve(shortCode);
-			  }
-			});
-		}
-  })
+const getUniqueCode = function(res, result, baseSiteUrl, cb_saveWebLink) {
+	var shortCode = Math.random().toString(36).slice(2,3);
+	console.log(shortCode);
+	var query  = WeblinkModel.where({ code: shortCode });
+	query.findOne(function (err, weblink) {
+	  if ( err ) {
+		  return res.json({Error: 'Sorry, something went wrong!'});
+	  }
+	  if (!weblink) {
+		  cb_saveWebLink(result, baseSiteUrl, shortCode);
+		  return res.json(result);;
+	  } else {
+	    console.log('dupe: '+shortCode);
+			getUniqueCode(res, result, baseSiteUrl,  cb_saveWebLink);
+	  }
+	});
+};
+
+const saveWebLink = function(result, baseSiteUrl, shortCode) {
+    new WeblinkModel({
+      code : shortCode, 
+      url : result.original_url
+    }).save();
+    result.short_url = baseSiteUrl + shortCode;
+    return result;
 };
 
 
@@ -55,17 +61,9 @@ exports.add = function(req, res){
   
   var result = { original_url : undefined,  short_url: undefined };
   result.original_url = originalUrl;
+  var  baseSiteUrl =  getBaseSiteUrl(req) +'/';
   
-  getUniqueCode()
-    .then((shortCode) => {
-      new WeblinkModel({
-        code : shortCode, 
-        url : result.original_url
-      }).save();
-      result.short_url = getBaseSiteUrl(req) +'/'+ shortCode;
-      res.json(result);
-    })
-    .catch((err) => console.error(err));
+  getUniqueCode(res, result, baseSiteUrl, saveWebLink);
 };
 
 exports.redirect = function(req, res){
