@@ -7,4 +7,4 @@ var WeblinkModelSchema   = new Schema({
     when: { type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('WeblinkModel', WeblinkModelSchema, "Weblink");
+module.exports = mongoose.model('WeblinkModel', WeblinkModelSchema, "weblink");
