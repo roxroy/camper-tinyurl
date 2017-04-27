@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
-    WebpageModel = require('./webpageModel');
+    WeblinkModel = require('./weblinkModel');
 
-var db_url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/weblinks';
+var db_url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/tinyurls';
 mongoose.connect(db_url);
 
 function isValidUrl(url) {
@@ -10,7 +10,7 @@ function isValidUrl(url) {
 }
 
 function getProtocol(xforwardedproto) {
-  return xforwardedproto  && xforwardedproto === "https" ? 'https' : 'http';
+  return xforwardedproto && xforwardedproto === "https" ? 'https' : 'http';
 }
 
 function getSiteUrl(req) {
@@ -21,9 +21,32 @@ function getBaseSiteUrl(req) {
   return getProtocol(req.headers['x-forwarded-proto']) + '://' + req.get('host');
 }
 
+
 exports.index = function(req, res){
   res.render('index', { url:getSiteUrl(req) } )
 };
+
+const getUniqueCode = function() {
+  // return new pending promise
+  return new Promise((resolve, reject) => {  
+		//while (true)
+		{
+			var shortCode = Math.random().toString(36).slice(2,6);
+			console.log(shortCode);
+			var query  = WeblinkModel.where({ code: shortCode });
+			query.findOne(function (err, weblink) {
+			  if ( err ) {
+				  return res.json({Error: 'Sorry, something went wrong!'});
+			  }
+			  if (!weblink) {
+			    console.log("Uique: "+shortCode);
+				  return resolve(shortCode);
+			  }
+			});
+		}
+  })
+};
+
 
 exports.add = function(req, res){
   var originalUrl = req.originalUrl.substr(5).trim();
@@ -33,22 +56,22 @@ exports.add = function(req, res){
   var result = { original_url : undefined,  short_url: undefined };
   result.original_url = originalUrl;
   
-  new WebpageModel({
-    url : result.original_url, 
-    updated_at : Date.now()
-  }).save( function( err, webpage, count ){
-      if ( err ) {
-          return res.json({Error: 'Sorry, something went wrong!'});
-      }
-      result.short_url = getBaseSiteUrl(req) +'/'+ webpage.id;
-      res.json(result)
-  });
+  getUniqueCode()
+    .then((shortCode) => {
+      new WeblinkModel({
+        code : shortCode, 
+        url : result.original_url
+      }).save();
+      result.short_url = getBaseSiteUrl(req) +'/'+ shortCode;
+      res.json(result);
+    })
+    .catch((err) => console.error(err));
 };
 
 exports.redirect = function(req, res){
   var short_url = req.params.short_url;
   if (short_url) {
-    var query  = WebpageModel.where({ id:short_url });
+    var query  = WeblinkModel.where({ code:short_url });
     query.findOne(function (err, webpage) {
       if ( err ) {
         return res.json({Error: 'Sorry, something went wrong!'});
